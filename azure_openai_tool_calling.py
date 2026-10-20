@@ -1,4 +1,10 @@
-import os, json, inspect, requests
+import inspect
+import json
+
+import requests
+
+from env_utils import require_env
+
 
 def add(a: float, b: float) -> float:
     """Add two numbers"""
@@ -26,10 +32,10 @@ def tool_from_fn(fn):
 
 TOOLS = [tool_from_fn(f) for f in (add, subtract, multiply, divide)]
 
-ENDPOINT = os.environ["AZURE_OPENAI_ENDPOINT"]
-DEPLOYMENT = os.environ["AZURE_OPENAI_DEPLOYMENT"]
+ENDPOINT = require_env("AZURE_OPENAI_ENDPOINT")
+DEPLOYMENT = require_env("AZURE_OPENAI_DEPLOYMENT")
 URL = f"{ENDPOINT}/openai/deployments/{DEPLOYMENT}/chat/completions?api-version=2024-10-21"
-HEADERS = {"api-key": os.environ["AZURE_OPENAI_API_KEY"], "content-type": "application/json"}
+HEADERS = {"api-key": require_env("AZURE_OPENAI_API_KEY"), "content-type": "application/json"}
 
 def run(query):
     messages = [{"role": "user", "content": query}]

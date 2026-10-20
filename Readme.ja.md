@@ -45,6 +45,24 @@ Claude Agent SDK、OpenAI の Agents SDK、LangChain のようなフレームワ
 
 ## 2. 環境変数
 
+サンプルファイルをコピーして、認証情報を埋めてください。
+
+```bash
+cp .env.example .env
+```
+
+その後、`.env` に値を設定するか、スクリプト実行前にシェルへ `export` してください。
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=AIza...
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=...
+AZURE_OPENAI_DEPLOYMENT=gpt-4o
+```
+
+すべてのスクリプトは `python-dotenv` を使ってプロジェクト直下の `.env` を自動読み込みし、必須キーが不足している場合は明確なメッセージで失敗します。
+
 | プロバイダー | 変数名 | 備考 |
 |---|---|---|
 | Claude | `ANTHROPIC_API_KEY` | Claude Platform コンソールから取得 |
@@ -52,14 +70,6 @@ Claude Agent SDK、OpenAI の Agents SDK、LangChain のようなフレームワ
 | Azure OpenAI | `AZURE_OPENAI_API_KEY` | Azure Portal → Keys and Endpoint のリソースキー |
 | Azure OpenAI | `AZURE_OPENAI_DEPLOYMENT` | **デプロイ名**（ベースモデル名ではない点に注意） |
 | Gemini | `GEMINI_API_KEY` | Google AI Studio から取得 |
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-export GEMINI_API_KEY=AIza...
-export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
-export AZURE_OPENAI_API_KEY=...
-export AZURE_OPENAI_DEPLOYMENT=gpt-4o
-```
 
 ---
 

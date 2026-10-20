@@ -1,6 +1,10 @@
-import os, json
+import json
 from dataclasses import dataclass, fields
+
 import requests
+
+from env_utils import require_env
+
 
 @dataclass
 class ContactInfo:
@@ -17,7 +21,7 @@ def schema_from(cls):
     return {"type": "object", "properties": props, "required": list(props), "additionalProperties": False}
 
 URL = "https://api.anthropic.com/v1/messages"
-HEADERS = {"x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01", "content-type": "application/json"}
+HEADERS = {"x-api-key": require_env("ANTHROPIC_API_KEY"), "anthropic-version": "2023-06-01", "content-type": "application/json"}
 
 def run(query):
     body = {

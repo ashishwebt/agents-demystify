@@ -43,6 +43,24 @@ No other packages are required — that's the point.
 
 ## 2. Environment variables
 
+Copy the sample file and fill in your credentials:
+
+```bash
+cp .env.example .env
+```
+
+Then set the values in `.env` (or export them in your shell before running the scripts):
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=AIza...
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=...
+AZURE_OPENAI_DEPLOYMENT=gpt-4o
+```
+
+All scripts load the project root `.env` automatically via `python-dotenv`, and they fail with a clear message if a required key is missing.
+
 | Provider | Variable | Notes |
 |---|---|---|
 | Claude | `ANTHROPIC_API_KEY` | From the Claude Platform console |
@@ -50,14 +68,6 @@ No other packages are required — that's the point.
 | Azure OpenAI | `AZURE_OPENAI_API_KEY` | Resource key from Azure Portal → Keys and Endpoint |
 | Azure OpenAI | `AZURE_OPENAI_DEPLOYMENT` | Your **deployment name** (not the base model name) |
 | Gemini | `GEMINI_API_KEY` | From Google AI Studio |
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-export GEMINI_API_KEY=AIza...
-export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
-export AZURE_OPENAI_API_KEY=...
-export AZURE_OPENAI_DEPLOYMENT=gpt-4o
-```
 
 ---
 

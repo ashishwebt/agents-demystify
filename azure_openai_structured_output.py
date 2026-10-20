@@ -1,6 +1,10 @@
-import os, json
+import json
 from dataclasses import dataclass, fields
+
 import requests
+
+from env_utils import require_env
+
 
 @dataclass
 class ContactInfo:
@@ -16,10 +20,10 @@ def schema_from(cls):
     props = {f.name: {"type": json_type(f.type)} for f in fields(cls)}
     return {"type": "object", "properties": props, "required": list(props), "additionalProperties": False}
 
-ENDPOINT = os.environ["AZURE_OPENAI_ENDPOINT"]
-DEPLOYMENT = os.environ["AZURE_OPENAI_DEPLOYMENT"]
+ENDPOINT = require_env("AZURE_OPENAI_ENDPOINT")
+DEPLOYMENT = require_env("AZURE_OPENAI_DEPLOYMENT")
 URL = f"{ENDPOINT}/openai/deployments/{DEPLOYMENT}/chat/completions?api-version=2024-10-21"
-HEADERS = {"api-key": os.environ["AZURE_OPENAI_API_KEY"], "content-type": "application/json"}
+HEADERS = {"api-key": require_env("AZURE_OPENAI_API_KEY"), "content-type": "application/json"}
 
 def run(query):
     body = {

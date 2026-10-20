@@ -1,4 +1,9 @@
-import os, inspect, requests
+import inspect
+
+import requests
+
+from env_utils import require_env
+
 
 def add(a: float, b: float) -> float:
     """Add two numbers"""
@@ -26,28 +31,43 @@ def tool_from_fn(fn):
 
 TOOLS = [{"function_declarations": [tool_from_fn(f) for f in (add, subtract, multiply, divide)]}]
 
-API_KEY = 'AIzaSyC0oZCSaMiMxYtbulfp5NaXPJmrChEEew0'
-URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={API_KEY}"
+API_KEY = require_env("GEMINI_API_KEY")
+URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
+HEADERS = {"x-goog-api-key": API_KEY, "Content-Type": "application/json"}
+
+
+def extract_text(resp):
+    if isinstance(resp, str):
+        return resp
+    if isinstance(resp, list):
+        parts = []
+        for item in resp:
+            text = extract_text(item)
+            if text:
+                parts.append(str(text))
+        return "".join(parts)
+    if isinstance(resp, dict):
+        for key in ("output", "response", "text", "content"):
+            if key in resp:
+                value = extract_text(resp[key])
+                if value:
+                    return value
+        if "candidates" in resp:
+            return extract_text(resp["candidates"])
+        if "parts" in resp:
+            return extract_text(resp["parts"])
+    return ""
+
 
 def run(query):
-    contents = [{"role": "user", "parts": [{"text": query}]}]
-    while True:
-        body = {"contents": contents, "tools": TOOLS}
-        resp = requests.post(URL, json=body).json()
-        parts = resp["candidates"][0]["content"]["parts"]
-        contents.append({"role": "model", "parts": parts})
-        calls = [p["functionCall"] for p in parts if "functionCall" in p]
-        if not calls:
-            return "".join(p.get("text", "") for p in parts)
-        response_parts = []
-        for call in calls:
-            out = globals()[call["name"]](**call["args"])
-            response_parts.append({"functionResponse": {"name": call["name"], "response": {"result": out}}})
-        contents.append({"role": "user", "parts": response_parts})
+    body = {"model": "gemini-3.8-flash", "input": query}
+    resp = requests.post(URL, headers=HEADERS, json=body).json()
+    return extract_text(resp) or resp
+
 
 QUERY = "What is 12 multiplied by 7, then subtract 5 from the result?"
 
 if __name__ == "__main__":
     print("Gemini:", run(QUERY))
 
-# API reference: https://ai.google.dev/api/generate-content
+# API reference: https://ai.google.dev/gemini-api/docs/api-overview

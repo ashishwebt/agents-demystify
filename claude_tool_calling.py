@@ -1,4 +1,9 @@
-import os, inspect, requests
+import inspect
+
+import requests
+
+from env_utils import require_env
+
 
 def add(a: float, b: float) -> float:
     """Add two numbers"""
@@ -27,7 +32,7 @@ def tool_from_fn(fn):
 TOOLS = [tool_from_fn(f) for f in (add, subtract, multiply, divide)]
 
 URL = "https://api.anthropic.com/v1/messages"
-HEADERS = {"x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01", "content-type": "application/json"}
+HEADERS = {"x-api-key": require_env("ANTHROPIC_API_KEY"), "anthropic-version": "2023-06-01", "content-type": "application/json"}
 
 def run(query):
     messages = [{"role": "user", "content": query}]
